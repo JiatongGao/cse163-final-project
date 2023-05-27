@@ -10,7 +10,6 @@ df_num = df_num.fillna(df_num.mean())
 df_num[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','RainTomorrow']] =\
 df[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','RainTomorrow']]
 df = df_num
-df = df.drop(['WindDir9am','WindSpeed9am','Humidity9am','Pressure9am','Cloud9am','Temp9am'],axis=1)
 df['Date'] = pd.to_datetime(df['Date'])# Convert date form
 print(df)
 
