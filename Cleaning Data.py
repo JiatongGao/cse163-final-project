@@ -21,8 +21,9 @@ min = df['MinTemp']
 max = df['MaxTemp']
 average = (min + max) / 2
 df['Temperature'] = average
-data = df.loc[:, ['Temperature', 'Rainfall', 'Evaporation','Sunshine','WindGustDir', 'WindGustSpeed', 'Location', 'Date']]
-data = data.loc[data.rows == 'Albury', :]
+data = df.loc[:, ['Temperature', 'Rainfall', 'Evaporation','Sunshine', 'WindGustSpeed']]
+
+print(data)
 X = data.drop('Temperature', axis=1)  # Features matrix
 y = data['Temperature']  # Target variable
 
