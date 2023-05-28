@@ -14,18 +14,17 @@ df_num[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','R
 df[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','RainTomorrow']]
 df = df_num
 df['Date'] = pd.to_datetime(df['Date'])# Convert date form
-print(df)
+
 
 # Split the data into features (X) and target variable (y)
 min = df['MinTemp']
 max = df['MaxTemp']
 average = (min + max) / 2
 df['Temperature'] = average
-data = df.loc[:, ['Temperature', 'Rainfall', 'Evaporation','Sunshine', 'WindGustSpeed']]
+data = df.loc[:, ['MaxTemp', 'Rainfall', 'Evaporation','Sunshine', 'WindGustSpeed']]
 
-print(data)
-X = data.drop('Temperature', axis=1)  # Features matrix
-y = data['Temperature']  # Target variable
+X = data.drop('MaxTemp', axis=1)  # Features matrix
+y = data['MaxTemp']  # Target variable
 
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -46,3 +45,5 @@ print(importance_df)
 
 # Determine the factor with the strongest influence
 strongest_factor = importance_df['Factor'].iloc[0]
+print(strongest_factor)
+
