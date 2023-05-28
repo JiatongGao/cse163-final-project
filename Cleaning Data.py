@@ -57,7 +57,7 @@ ax.axis('equal')  # Ensure a circular pie chart
 
 plt.tight_layout()  # Adjust spacing between subplots
 
-plt.show()
+plt.savefig('factors9am.png', bbox_inches='tight')
 
 # 重复以上过程 3 pm
 
@@ -102,4 +102,4 @@ ax.axis('equal')  # Ensure a circular pie chart
 
 plt.tight_layout()  # Adjust spacing between subplots
 
-plt.show()
+plt.savefig('factors3pm.png', bbox_inches='tight')
