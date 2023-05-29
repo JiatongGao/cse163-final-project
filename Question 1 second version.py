@@ -60,14 +60,14 @@ for city in cities:
 
 buttons = [
     dict(
-        label="Scatter",
+        label="Percentage",
         method="update",
-        args=[{"visible": scatter_visible}, {"title": "Weather Analysis - Scatter"}]
+        args=[{"visible": scatter_visible}, {"title": "Percentage of days temperature larger than 30 in a year"}]
     ),
     dict(
-        label="Bar",
+        label="Temperature",
         method="update",
-        args=[{"visible": bar_visible}, {"title": "Weather Analysis - Bar"}]
+        args=[{"visible": bar_visible}, {"title": "Averge temperature by year"}]
     )
 ]
 
@@ -88,7 +88,7 @@ updatemenu = [
 fig.update_layout(
     height=3500,
     width=2000,
-    title_text='Weather Analysis - Scatter',
+    title_text='Temperature Analysis',
     updatemenus=updatemenu,
     plot_bgcolor='rgb(255, 228, 225)',  # Set plot background color to light blue
     paper_bgcolor='rgb(204, 229, 255)',  # Set paper background color to light blue
@@ -113,12 +113,14 @@ fig.update_layout(
 )
 
 # Show the figure
-fig.show()
+
 
 username = 'JiatongGao'
 api_key = '0VSlIry9JOD1DGbpsPWD'
 
 tls.set_credentials_file(username=username, api_key=api_key)
 url = py.plot(fig, filename='weather_analysis', auto_open=False)
-#https://plotly.com/~JiatongGao/1/
+plot_websit = "https://plotly.com/~JiatongGao/1/"
 print("website of plot", url)
+with open("Question1_plot", "w") as file:
+    file.write(plot_websit)
