@@ -16,6 +16,7 @@ df = df_num
 df['Date'] = pd.to_datetime(df['Date'])# Convert date form
 
 
+
 # Split the data into features (X) and target variable (y)
 data = df.loc[:, ['Temp9am', 'Rainfall', 'Evaporation','Sunshine', 'WindGustSpeed','Humidity9am','WindSpeed9am','Pressure9am','Cloud9am',]]
 
