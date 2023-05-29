@@ -18,7 +18,7 @@ df_num[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','R
 df[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','RainTomorrow']]
 df = df_num
 df['Date'] = pd.to_datetime(df['Date'])# Convert date form
-city = 'Albury'
+city = 'Sydney'
 df = df[(df['Location'] == city)]
 
 ###############
