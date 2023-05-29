@@ -101,7 +101,7 @@ comparison = np.column_stack((predictions, true_labels))
 # Make a csv
 
 df_comparison = pd.DataFrame(comparison, columns=['Predictions', 'True Labels'])
-df_comparison.to_csv('comparison.csv', index=False)
+
 
 # Make a plot
 x = range(len(predictions))
@@ -115,7 +115,7 @@ plt.legend()
 plt.xlabel('Sample Index')
 plt.ylabel('Temperature')
 
-plt.savefig('comparison_plot.png')
+
 
 # test
 absolute_errors = np.abs(predictions - true_labels)

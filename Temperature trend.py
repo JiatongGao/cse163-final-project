@@ -24,6 +24,8 @@ print(df_unique)
 sns.relplot(data=df_unique, x="Year", y="Percentage",kind="line")
 plt.ylabel('Percentage')
 plt.title("Percentage of extreme temperature for " + city + " weather over years")
+
+
 plt.savefig('plot_test.png', bbox_inches='tight')
 
 # Merge the aggregated values back into the original DataFrame
