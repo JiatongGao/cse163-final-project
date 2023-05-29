@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import TensorDataset, DataLoader
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -38,51 +39,66 @@ X_test = torch.tensor(X_test, dtype= torch.float32)
 y_train = torch.tensor(y_train, dtype= torch.float32)
 y_test = torch.tensor(y_test, dtype=torch.float32)
 
+# data augment
+def data_augmentation(inputs, labels):
+    augmented_inputs = torch.flip(inputs, dims=[0])
+    augmented_labels = labels.clone()
+    return torch.cat((inputs, augmented_inputs)), torch.cat((labels, augmented_labels))
+
 
 class TemperaturePredict(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers):
         super(TemperaturePredict, self).__init__()
         self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc1 = nn.Linear(hidden_size, 64)
+        self.fc1 = nn.Linear(hidden_size, 128)
         self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(64, 1)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 1)
     
     def forward(self, x):
         output, _ = self.lstm(x)
         output = output[:, -1, :]
         output = self.fc1(output)
         output = self.relu(output)
-        predicted_output = self.fc2(output)
+        output = self.fc2(output)
+        output = self.relu(output)
+        predicted_output = self.fc3(output)
         return predicted_output
 
 # An example
 input_size = X_train.shape[1]
 hidden_size = 128
 num_layers = 3
+weight_decay = 0.03
 
 model = TemperaturePredict(input_size, hidden_size, num_layers)
 
 # loss
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=weight_decay)
 
 # train the model
-num_epochs = 100
-batch_size = 32
+train_dataset = TensorDataset(X_train, y_train)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
+num_epochs = 100
 for epoch in range(num_epochs):
     epoch_loss = 0.0
-    num_batches = 0
     
-    for i in range(0, len(X_train), batch_size):
-        batch_inputs = X_train[i:i+batch_size]
-        batch_labels = y_train[i:i+batch_size]
+    for batch_inputs, batch_labels in train_loader:
+        # data augmentation 
+        batch_inputs, batch_labels = data_augmentation(batch_inputs, batch_labels)
 
         optimizer.zero_grad()
         
         outputs = model(batch_inputs.unsqueeze(1))
         loss = criterion(outputs.squeeze(), batch_labels.squeeze())
         
+        ###
+        l2_reg = torch.tensor(0.)
+        for param in model.parameters():
+            l2_reg += torch.norm(param, p=2)
+        loss += weight_decay * l2_reg
         
         loss.backward()
         optimizer.step()
