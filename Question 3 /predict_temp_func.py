@@ -7,12 +7,9 @@ from torch.utils.data import TensorDataset, DataLoader
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-#import data
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 df = pd.read_csv("weathernoNA.csv")
-
-
-
-
 def predict_temp(city):
     data = df[df['Location'] == city][['Date', 'Evaporation', 'Sunshine', 'Pressure9am', 'Humidity9am', 'Temp9am']]
     features = data[['Evaporation', 'Sunshine', 'Pressure9am', 'Humidity9am']].values
@@ -35,7 +32,7 @@ def predict_temp(city):
         augmented_labels = labels.clone()
         return torch.cat((inputs, augmented_inputs)), torch.cat((labels, augmented_labels))
 
-
+    # Build the neutral network model
     class TemperaturePredict(nn.Module):
         def __init__(self, input_size, hidden_size, num_layers):
             super(TemperaturePredict, self).__init__()
@@ -55,7 +52,7 @@ def predict_temp(city):
             predicted_output = self.fc3(output)
             return predicted_output
 
-# An example
+####
     input_size = X_train.shape[1]
     hidden_size = 128
     num_layers = 3
@@ -94,15 +91,17 @@ def predict_temp(city):
             optimizer.step()
 
             epoch_loss += loss.item()
-        
+    
+    # Use neutral network to predict
     model.eval()
     with torch.no_grad():
         test_outputs = model(X_test.unsqueeze(1))
 
-    predictions = test_outputs.squeeze().numpy()
+    predictions_nn = test_outputs.squeeze().numpy()
     true_labels = y_test.numpy()
 
-    comparison = np.column_stack((predictions, true_labels))
+    
+
 
 # Make a csv
 
@@ -124,14 +123,11 @@ def predict_temp(city):
 
 
 # test
-    absolute_errors = np.abs(predictions - true_labels)
-    mae = np.mean(absolute_errors)
-    rmse = np.sqrt(np.mean(absolute_errors ** 2))
+    absolute_errors = np.abs(predictions_nn - true_labels)
+    mae_nn = np.mean(absolute_errors)
+    rmse_nn = np.sqrt(np.mean(absolute_errors ** 2))
+    accuracy_nn = 100 - (mae_nn / np.mean(true_labels)) * 100
+
     
 
-    return mae, rmse
-cities = ['Sydney','Melbourne','Brisbane','Perth','Canberra','Adelaide']
-for city in cities:
-    mae, rmse = predict_temp(city)
-    print(f"{city} - MAE: {mae:.2f}")
-    print(f"{city} - RMSE: {rmse:.2f}")
+    return mae_nn, rmse_nn, accuracy_nn
