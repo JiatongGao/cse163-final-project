@@ -1,9 +1,10 @@
-from predict_temp_func import predict_temp
-#import data
 
-cities = ['Sydney','Melbourne']
+from Question_3_predict_func import predict_temp
+import pandas as pd
+#import data
+cities = ['Sydney','Melbourne','Brisbane','Perth','Canberra',"Adelaide"]
 for city in cities:
-    mae_nn, rmse_nn, accuracy_nn = predict_temp(city)
-    print(f"{city} - MAE: {mae_nn:.2f}")
-    print(f"{city} - RMSE: {rmse_nn:.2f}")
-    print(f"{city} - Accuracy: {accuracy_nn:.2f}%")
+    mae_ensemble, rmse_ensemble, accuracy_ensemble  = predict_temp(city)
+    print(f"{city} - MAE: {mae_ensemble:.2f}")
+    print(f"{city} - RMSE: {rmse_ensemble:.2f}")
+    print(f"{city} - Accuracy: {accuracy_ensemble:.2f}%")
