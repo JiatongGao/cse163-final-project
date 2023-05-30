@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import GradientBoostingRegressor
+from q3_visualize import plot_line
 
 def predict_temp(city):
     df = pd.read_csv("weathernoNA.csv")
@@ -126,11 +127,11 @@ def predict_temp(city):
     mae_ensemble = np.mean(absolute_errors_ensemble)
     rmse_ensemble = np.sqrt(np.mean(absolute_errors_ensemble ** 2))
     accuracy_ensemble = 100 - (mae_ensemble / np.mean(true_labels)) * 100
+    
+    # plot
+    true_labels = np.ravel(y_test_tensor.numpy())
+    ensemble_predictions = np.ravel(ensemble_predictions)
 
-    # Calculate evaluation metrics for the neural network model
-    absolute_errors_nn = np.abs(predictions_nn - true_labels)
-    mae_nn = np.mean(absolute_errors_nn)
-    rmse_nn = np.sqrt(np.mean(absolute_errors_nn ** 2))
-    accuracy_nn = 100 - (mae_nn / np.mean(true_labels)) * 100
-
+    plot_line(data['Date'],true_labels,ensemble_predictions)
+    
     return mae_ensemble, rmse_ensemble, accuracy_ensemble
