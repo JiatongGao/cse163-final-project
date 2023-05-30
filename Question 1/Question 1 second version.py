@@ -10,6 +10,8 @@ data['Date'] = pd.to_datetime(data['Date'])
 data['Year'] = data['Date'].dt.year
 avg_temp = data.groupby(['Location', 'Year'])['MaxTemp'].mean().reset_index()
 
+
+
 # Calculate the percentage bigger than 30C 
 hot_days = data[data['MaxTemp'] > 30].groupby(['Location', 'Year']).size().reset_index(name='HotDays')
 total_days = data.groupby(['Location', 'Year']).size().reset_index(name='TotalDays')
@@ -25,9 +27,11 @@ num_cols = 3
 # Create subplots with two subplots per city
 fig = make_subplots(rows=num_rows, cols=num_cols, subplot_titles=cities, specs=[[{'secondary_y': True}, {'secondary_y': True}, {'secondary_y': True}]] * num_rows)
 
-# Traverse each city
+
+# set row and col
 row = 1
 col = 1
+# set buttons
 scatter_visible = []
 bar_visible = []
 for city in cities:
@@ -50,9 +54,6 @@ for city in cities:
     bar_visible.append(False)
 
     # Set y-axis titles for both subplots
-   
-    
-
     col += 1
     if col > num_cols:
         col = 1
@@ -89,28 +90,28 @@ fig.update_layout(
     height=3500,
     width=2000,
     title_text='Temperature Analysis',
-    updatemenus=updatemenu,
-    plot_bgcolor='rgb(255, 228, 225)',  # Set plot background color to light blue
-    paper_bgcolor='rgb(204, 229, 255)',  # Set paper background color to light blue
-    font=dict(family='Arial', size=18, color='black'),  # Set font family, size, and color
-    margin=dict(t=200, b=100),  # Adjust top and bottom margins
-    legend=dict(font=dict(size=16)),  # Set legend font size
+    updatemenus=updatemenu, 
+    paper_bgcolor='white', 
+    font=dict(family='Arial', size=18, color='black'),  
+    margin=dict(t=200, b=100),
+    showlegend=False,
     xaxis=dict(
         title='Year',
-        title_font=dict(size=8),
+        title_font=dict(size=20),
         tickfont=dict(size=16),
     ),
     yaxis=dict(
         title='Temperature (°C)',
-        title_font=dict(size=8),
-        tickfont=dict(size=8),  
+        title_font=dict(size=20),
+        tickfont=dict(size=16),  
     ),
     yaxis2=dict(
         title='Percentage',
-        title_font=dict(size=8),
-        tickfont=dict(size=8),  
+        title_font=dict(size=20),
+        tickfont=dict(size=16),  
     )
 )
+
 
 # Show the figure
 
