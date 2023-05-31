@@ -4,16 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
-df = pd.read_csv("weatherAUS.csv")
-# Deal with NA
-# Replace NaN with the mean value of that column
-missing_values = df.isnull().sum()
-df_num = df.apply(pd.to_numeric, errors='coerce')
-df_num = df_num.fillna(df_num.mean())
-df_num[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','RainTomorrow']] =\
-df[['Date','Location','WindGustDir','WindDir9am','WindDir3pm','RainToday','RainTomorrow']]
-df = df_num
-df['Date'] = pd.to_datetime(df['Date'])# Convert date form
+df = pd.read_csv("weathernoNA.csv")
+
 
 
 
