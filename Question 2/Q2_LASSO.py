@@ -5,7 +5,8 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
-
+from sklearn.model_selection import KFold
+from sklearn.metrics import mean_squared_error
 
 
 data = pd.read_csv('weather9am.csv')
@@ -29,7 +30,7 @@ X_train, X_test = features[:split_point], features[split_point:]
 y_train, y_test = target[:split_point], target[split_point:]
 
 #select an alpha
-alpha_lasso = 10**np.linspace(-4,0,100)
+alpha_lasso = 10**np.linspace(-5,0,100)
 lasso = Lasso()
 coefs_lasso = []
 
@@ -47,27 +48,34 @@ plt.xlabel('alpha')
 plt.ylabel('weights: scaled coefficients')
 plt.title('Lasso regression coefficients Vs. alpha')
 plt.legend(features.columns)
-plt.savefig('alpha_graph_9am.png', bbox_inches='tight')
+plt.show()
 
-coefs_list = []
-for i in alpha_lasso:
-    lasso = Lasso(alpha = i)
-    model_lasso = lasso.fit(X_train, y_train)
-    coef = pd.Series(model_lasso.coef_,index=X_train.columns)
-    coefs_list.append(coef[coef != 0].abs().sort_values(ascending=False))
+# K-cross
+alpha_lasso = 10 ** np.linspace(-4, 0, 100)
+cv_errors = []
+kf = KFold(n_splits=2, shuffle=True,random_state=42)
+for alpha in alpha_lasso:
+    lasso = Lasso(alpha=alpha)
+    fold_errors = []
+    for train_index, val_index in kf.split(X_train):
+        X_train_fold, X_val_fold = X_train.iloc[train_index], X_train.iloc[val_index]
+        y_train_fold, y_val_fold = y_train.iloc[train_index], y_train.iloc[val_index]
+        
+        lasso.fit(X_train_fold, y_train_fold)
+        y_pred = lasso.predict(X_val_fold)
+        fold_error = mean_squared_error(y_val_fold, y_pred)
+        fold_errors.append(fold_error)
 
-coef_table = pd.concat(coefs_list, axis=1)
-coef_table.columns = alpha_lasso
-coef_table.to_csv('alpha_coef_table_9am.csv', index=True)
-fea = X_train.columns
-a = pd.DataFrame()
-a['feature'] = fea
-a['importance'] = coef.values
+    
 
-a = a.sort_values('importance',ascending = False)
-plt.figure(figsize=(12,8))
-plt.barh(a['feature'],a['importance'])
-plt.title('the importance features')
-plt.savefig('importance_of_feature_9am.png', bbox_inches='tight')
+best_alpha_index = np.argmin(fold_errors)
+best_alpha = alpha_lasso[best_alpha_index]
+best_cv_error = np.min(fold_errors)
+
+print("Best alpha:", best_alpha)
+print("Best CV error:", best_cv_error)
+
+
+
 
 
