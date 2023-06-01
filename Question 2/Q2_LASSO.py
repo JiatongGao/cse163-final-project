@@ -76,6 +76,19 @@ print("Best alpha:", best_alpha)
 print("Best CV error:", best_cv_error)
 
 
+# use best LASSO
+lasso = Lasso(alpha=best_alpha)
+lasso.fit(X_train, y_train)
 
+coef_abs = np.abs(lasso.coef_)
+feature_importance = coef_abs / np.max(coef_abs) 
+
+plt.figure(figsize=(10, 6))
+plt.bar(X_train.columns, feature_importance)
+plt.xlabel('Features')
+plt.ylabel('Feature Importance')
+plt.title('Feature Importance based on Lasso Regression (alpha={})'.format(best_alpha))
+plt.xticks(rotation=90)
+plt.show()
 
 
