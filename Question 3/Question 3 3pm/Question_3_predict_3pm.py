@@ -3,27 +3,28 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import TensorDataset, DataLoader
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+from torch.utils.data import TensorDataset, DataLoader
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import GradientBoostingRegressor
-from q3_visualize import plot_line
+from sklearn.metrics import r2_score
+import matplotlib.pyplot as plt
 
-def predict_temp(city):
-    df = pd.read_csv("weathernoNA.csv")
-    data = df[df['Location'] == city][['Date', 'Evaporation', 'Sunshine', 'Pressure9am', 'Humidity9am', 'Temp9am']]
-    features = data[['Evaporation', 'Sunshine', 'Pressure9am', 'Humidity9am']].values
-    target = data[['Temp9am']].values
+
+def predict_temp_3pm(city):
+    df = pd.read_csv("weather3pm.csv")
+    data = df[df['Location'] == city][['Date', 'Evaporation', 'Pressure3pm', 'Humidity3pm',
+                                       'WindGustSpeed','Sunshine','Temp3pm']]
+    features = data[['Evaporation', 'Pressure3pm', 'Humidity3pm','Sunshine','WindGustSpeed']].values
+    target = data[['Temp3pm']].values
     # standarized 
-    scaler = StandardScaler()
+    scaler = MinMaxScaler()
     features = scaler.fit_transform(features)
 
     # divide train and test (20% test and 80% target)
-    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
+    split_point = int(len(data)*0.8)
+    X_train, X_test = features[:split_point], features[split_point:]
+    y_train, y_test = target[:split_point], target[split_point:]
     # convert to tensor
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
     X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
@@ -69,7 +70,7 @@ def predict_temp(city):
 
     # loss
     criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=weight_decay)
+    optimizer = optim.AdamW(model.parameters(), lr=0.001, weight_decay=weight_decay)
 
     # train the model
     train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
@@ -106,7 +107,7 @@ def predict_temp(city):
     predictions_nn = test_outputs.squeeze().numpy()
     true_labels = y_test_tensor.numpy()
 
-    # Train and test the Random Forest model
+     # Train and test the Random Forest model
     rf_model = RandomForestRegressor(n_estimators=100, max_depth=10, min_samples_split=2, min_samples_leaf=1)
     rf_model.fit(X_train_np, y_train_np)
     rf_predictions = rf_model.predict(X_test_np)
@@ -125,13 +126,21 @@ def predict_temp(city):
     # Calculate evaluation metrics for the ensemble model
     absolute_errors_ensemble = np.abs(ensemble_predictions - true_labels)
     mae_ensemble = np.mean(absolute_errors_ensemble)
-    rmse_ensemble = np.sqrt(np.mean(absolute_errors_ensemble ** 2))
+    r2_ensemble = r2_score(true_labels, ensemble_predictions)
     accuracy_ensemble = 100 - (mae_ensemble / np.mean(true_labels)) * 100
     
-    # plot
-    true_labels = np.ravel(y_test_tensor.numpy())
-    ensemble_predictions = np.ravel(ensemble_predictions)
+    # plot R square
+    true_labels_flat = np.ravel(true_labels)
+    ensemble_predictions_flat = np.ravel(ensemble_predictions)
+    coefficients = np.polyfit(true_labels_flat, ensemble_predictions_flat, deg=1)
+    x = np.linspace(min(true_labels_flat), max(true_labels_flat), 100)
+    fit_line = np.polyval(coefficients, x)
 
-    plot_line(data['Date'],true_labels,ensemble_predictions)
-    
-    return mae_ensemble, rmse_ensemble, accuracy_ensemble
+    plt.scatter(true_labels_flat, ensemble_predictions_flat)
+    plt.plot(x, fit_line, color='r', label='Fit Line')
+    plt.xlabel('Actual Values')
+    plt.ylabel('Predicted Values')
+    plt.title('R2 Score 3pm: {}'.format(r2_ensemble))
+    plt.savefig('R2 score 3pm', bbox_inches='tight')
+
+    return mae_ensemble, r2_ensemble, accuracy_ensemble
