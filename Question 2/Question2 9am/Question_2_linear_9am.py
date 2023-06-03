@@ -15,8 +15,9 @@ data = df.loc[:, ['Temp9am', 'Rainfall', 'Evaporation','Sunshine', 'WindGustSpee
 X = data.drop('Temp9am', axis=1)  # Features matrix
 y = data['Temp9am']  # Target variable
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+split_point = int(len(data)*0.8)
+X_train, X_test = X[:split_point], X[split_point:]
+y_train, y_test = y[:split_point], y[split_point:]
 
 # Fit a linear regression model
 model = LinearRegression()
