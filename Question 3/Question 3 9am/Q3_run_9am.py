@@ -9,3 +9,13 @@ for city in cities:
     data_9am.append([mae_ensemble, r2_ensemble, accuracy_ensemble])
 
 csv_file = 'stat_data_9am.csv'
+with open(csv_file, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    
+    # 写入表头
+    writer.writerow(['Cities', 'MAE', 'R2', 'Accuracy'])
+    
+    # 写入数据行
+    for i in range(len(cities)):
+        writer.writerow([cities[i]] + data_9am[i])
+    

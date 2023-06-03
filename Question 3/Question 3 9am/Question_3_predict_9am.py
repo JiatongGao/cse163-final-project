@@ -9,9 +9,12 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
+import warnings
+
 
 
 def predict_temp_9am(city):
+    warnings.filterwarnings("ignore")
     df = pd.read_csv("weathernoNA.csv")
     data = df[df['Location'] == city][['Date', 'Evaporation', 'Rainfall', 'Pressure9am', 'Humidity9am','WindSpeed9am','Temp9am']]
     features = data[['Evaporation', 'Rainfall', 'Pressure9am', 'Humidity9am','WindSpeed9am']].values
@@ -135,11 +138,13 @@ def predict_temp_9am(city):
     x = np.linspace(min(true_labels_flat), max(true_labels_flat), 100)
     fit_line = np.polyval(coefficients, x)
 
+    plt.figure()
     plt.scatter(true_labels_flat, ensemble_predictions_flat)
     plt.plot(x, fit_line, color='r', label='Fit Line')
     plt.xlabel('Actual Values')
     plt.ylabel('Predicted Values')
-    plt.title('R2 Score 9am: {}'.format(r2_ensemble))
-    plt.savefig('R2 score 9am', bbox_inches='tight')
+    plt.title('R2 Score 9am for {}'.format(city))
+    plt.savefig('R2_score_9am_{}'.format(city), bbox_inches='tight')
+    plt.close()
 
     return mae_ensemble, r2_ensemble, accuracy_ensemble

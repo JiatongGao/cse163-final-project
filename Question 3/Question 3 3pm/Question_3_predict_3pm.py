@@ -136,11 +136,14 @@ def predict_temp_3pm(city):
     x = np.linspace(min(true_labels_flat), max(true_labels_flat), 100)
     fit_line = np.polyval(coefficients, x)
 
+    plt.figure()
     plt.scatter(true_labels_flat, ensemble_predictions_flat)
     plt.plot(x, fit_line, color='r', label='Fit Line')
     plt.xlabel('Actual Values')
     plt.ylabel('Predicted Values')
-    plt.title('R2 Score 3pm: {}'.format(r2_ensemble))
-    plt.savefig('R2 score 3pm', bbox_inches='tight')
+    plt.title('R2 Score 3pm for {}'.format(city))
+    plt.savefig('R2_score_3pm_{}'.format(city), bbox_inches='tight')
+    plt.close()
+
 
     return mae_ensemble, r2_ensemble, accuracy_ensemble
