@@ -56,7 +56,7 @@ plt.savefig('Different alpha coefficients 9am', bbox_inches='tight')
 # K-cross validation
 alpha_lasso = 10 ** np.linspace(-4, 0, 100)
 cv_errors = []
-kf = KFold(n_splits=2, shuffle=True,random_state=42)
+kf = KFold(n_splits=10, shuffle=True,random_state=42)
 for alpha in alpha_lasso:
     # initalize Lasso parameter
     lasso = Lasso(alpha=alpha)
