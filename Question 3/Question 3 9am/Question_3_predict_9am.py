@@ -35,9 +35,6 @@ def predict_temp_9am(city):
     X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
     y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
-    X_train_np = np.array(X_train)
-    X_test_np = np.array(X_test)
-    y_train_np = np.array(y_train)
 
     # data augment
     def data_augmentation(inputs, labels):
@@ -107,28 +104,16 @@ def predict_temp_9am(city):
 
     predictions_nn = test_outputs.squeeze().numpy()
     true_labels = y_test_tensor.numpy()
-# Train and test the Random Forest model
-    rf_model = RandomForestRegressor(n_estimators=100,
-                                     max_depth=10, min_samples_split=2,
-                                     min_samples_leaf=1)
-    rf_model.fit(X_train_np, y_train_np)
-    rf_predictions = rf_model.predict(X_test_np)
-# Convert the predictions to numpy array
-    predictions_rf = np.array(rf_predictions)
-# Ensemble predictions
-    stacked_features = np.column_stack((predictions_nn, predictions_rf))
-    meta_model = LinearRegression()
-    meta_model.fit(stacked_features, true_labels)
-    ensemble_predictions = meta_model.predict(stacked_features)
+
 
     # Calculate evaluation metrics for the ensemble model
-    absolute_errors_ensemble = np.abs(ensemble_predictions - true_labels)
+    absolute_errors_ensemble = np.abs(predictions_nn - true_labels)
     mae_ensemble = np.mean(absolute_errors_ensemble)
-    r2_ensemble = r2_score(true_labels, ensemble_predictions)
+    r2_ensemble = r2_score(true_labels, predictions_nn)
     accuracy_ensemble = 100 - (mae_ensemble / np.mean(true_labels)) * 100
     # plot R square
     true_labels_flat = np.ravel(true_labels)
-    ensemble_predictions_flat = np.ravel(ensemble_predictions)
+    ensemble_predictions_flat = np.ravel(predictions_nn)
     coefficients = np.polyfit(true_labels_flat,
                               ensemble_predictions_flat, deg=1)
     x = np.linspace(min(true_labels_flat),
