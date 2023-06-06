@@ -56,7 +56,7 @@ plt.savefig('Different alpha coefficients 3pm', bbox_inches='tight')
 # K-cross validation
 alpha_lasso = 10 ** np.linspace(-4, 0, 100)
 cv_errors = []
-kf = KFold(n_splits=2, shuffle=True,random_state=42)
+kf = KFold(n_splits=10, shuffle=True,random_state=42)
 for alpha in alpha_lasso:
     # initalize Lasso parameter
     lasso = Lasso(alpha=alpha)
@@ -78,7 +78,6 @@ best_alpha = alpha_lasso[best_alpha_index]
 best_cv_error = np.min(fold_errors)
 
 best_alpha_error = [["Best alpha", best_alpha], ["Minimal error", best_cv_error]]
-file_path = "output.csv"
 print("Best alpha:", best_alpha)
 print("Minimal error:", best_cv_error)
 
