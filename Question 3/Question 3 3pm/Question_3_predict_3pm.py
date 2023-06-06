@@ -101,19 +101,35 @@ def predict_temp_3pm(city):
     model.eval()
     with torch.no_grad():
         test_outputs = model(X_test_tensor.unsqueeze(1))
+        train_outputs = model(X_train_tensor.unsqueeze(1))
 
-    predictions_nn = test_outputs.squeeze().numpy()
+    predictions_nn_test = test_outputs.squeeze().numpy()
+    predictions_nn_train = train_outputs.squeeze().numpy()
     true_labels = y_test_tensor.numpy()
+    train_labels = y_train_tensor.numpy()
+   
+    
+    r2_train = r2_score(train_labels, predictions_nn_train)
+    absolute_errors_train = np.abs(predictions_nn_train - train_labels)
+    mae_train = np.mean(absolute_errors_train)
+    accuracy_train = 100 - (mae_train / np.mean(train_labels)) * 100
+    print(r2_train)
+    print(accuracy_train)
+    
+    
 
+    
+    
+   
 
     # Calculate evaluation metrics for the ensemble model
-    absolute_errors_ensemble = np.abs(predictions_nn - true_labels)
+    absolute_errors_ensemble = np.abs(predictions_nn_test - true_labels)
     mae_ensemble = np.mean(absolute_errors_ensemble)
-    r2_ensemble = r2_score(true_labels, predictions_nn)
+    r2_ensemble = r2_score(true_labels, predictions_nn_test)
     accuracy_ensemble = 100 - (mae_ensemble / np.mean(true_labels)) * 100
     # plot R square
     true_labels_flat = np.ravel(true_labels)
-    ensemble_predictions_flat = np.ravel(predictions_nn)
+    ensemble_predictions_flat = np.ravel(predictions_nn_test)
     coefficients = np.polyfit(true_labels_flat,
                               ensemble_predictions_flat, deg=1)
     x = np.linspace(min(true_labels_flat),
