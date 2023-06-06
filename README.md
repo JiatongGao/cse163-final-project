@@ -7,12 +7,5 @@ You should download "weather3pm.csv" and "weather9am.csv". There are several lib
 KFold from sklearn.model_selection import.
 Mean_squared_error from sklearn.metrics import.
 # For Question 3
-You should download "weather3pm.csv" and "weather9am.csv".
-There are several libraries you need to install.
-Pandas, numpy and matlab plotling lab.
-Torch，torch.nn, and torch.optim.
-RandomForestRegressor from sklearn.ensemble.
-TensorDataset, DataLoader from torch.utils.data.
-MinMaxScaler from sklearn.preprocessing.
-LinearRegression from sklearn.linear_model.
-r2_score from sklearn.metrics.
+You should download "weather3pm.csv" and "weather9am.csv". There are several libraries you need to install. Pandas, numpy and matlab plotling lab.
+Torch，torch.nn, and torch.optim. RandomForestRegressor from sklearn.ensemble. TensorDataset, DataLoader from torch.utils.data. MinMaxScaler from sklearn.preprocessing. LinearRegression from sklearn.linear_model. r2_score from sklearn.metrics.
