@@ -3,10 +3,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from sklearn.ensemble import RandomForestRegressor
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 import warnings
@@ -107,17 +105,12 @@ def predict_temp_9am(city):
     predictions_nn_train = train_outputs.squeeze().numpy()
     true_labels = y_test_tensor.numpy()
     train_labels = y_train_tensor.numpy()
-    
     r2_train = r2_score(train_labels, predictions_nn_train)
     absolute_errors_train = np.abs(predictions_nn_train - train_labels)
     mae_train = np.mean(absolute_errors_train)
     accuracy_train = 100 - (mae_train / np.mean(train_labels)) * 100
     print("R2", r2_train)
-    print("Accuracy",accuracy_train) 
-    
-    
-
-
+    print("Accuracy", accuracy_train)
     # Calculate evaluation metrics for the ensemble model
     absolute_errors_ensemble = np.abs(predictions_nn_test - true_labels)
     mae_ensemble = np.mean(absolute_errors_ensemble)
